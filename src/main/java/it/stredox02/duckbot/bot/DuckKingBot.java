@@ -52,7 +52,7 @@ public class DuckKingBot extends TelegramLongPollingBot {
             SendMessage alreadyTakenMessage = new SendMessage();
             alreadyTakenMessage.setChatId(message.getChatId().toString());
             alreadyTakenMessage.enableMarkdownV2(true);
-            alreadyTakenMessage.setText("[ ](https://www.memecreator.org/static/images/templates/1366382.jpg) \uD83D\uDE2D\uD83E\uDD86 *Mi dispiace* \uD83E\uDD86\uD83D\uDE2D\nMa " + user.getFirstName() + (user.getLastName() != null ? " " + user.getLastName() : "") + " ha gia' preso il posto di *re papera*");
+            alreadyTakenMessage.setText("[ ](https://i.imgur.com/oVj2mtR.jpeg) \uD83D\uDE2D\uD83E\uDD86 *Mi dispiace* \uD83E\uDD86\uD83D\uDE2D\nMa " + duckKing.get(chatID).getFirstName() + (duckKing.get(chatID).getLastName() != null ? " " + duckKing.get(chatID).getLastName() : "") + " ha gia' preso il posto di *re papera*\n\n");
             try {
                 executeAsync(alreadyTakenMessage);
             } catch (TelegramApiException e) {

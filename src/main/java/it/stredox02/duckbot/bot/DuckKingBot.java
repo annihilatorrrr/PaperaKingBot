@@ -12,6 +12,9 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 @RequiredArgsConstructor
 public class DuckKingBot extends TelegramLongPollingBot {
@@ -47,16 +50,6 @@ public class DuckKingBot extends TelegramLongPollingBot {
             if(!key.equals(""+chatID)){
                 continue;
             }
-            if (section.getString(key + ".id") != null && ((section.getLong(key + ".time") + (1000 * 60 * 60 * 24)) < System.currentTimeMillis())) {
-                section.remove("" + chatID);
-                try {
-                    groupCache.save();
-                    groupCache.load();
-                } catch (IOException | InvalidConfigurationException e) {
-                    e.printStackTrace();
-                }
-            }
-
             if (section.getLong(key + ".id") == user.getId()) {
                 SendMessage alreadyTakenMessage = new SendMessage();
                 alreadyTakenMessage.setChatId(message.getChatId().toString());
@@ -105,10 +98,14 @@ public class DuckKingBot extends TelegramLongPollingBot {
             e.printStackTrace();
         }
 
+        ZoneId zoneId = ZoneId.of("Europe/Rome");
+        ZonedDateTime start = ZonedDateTime.ofInstant(Instant.now(), zoneId).toLocalDate().atStartOfDay(zoneId);
+        ZonedDateTime tomorrow = start.plusDays(1);
+
         groupCache.set("chats." + chatID + ".id", user.getId());
         groupCache.set("chats." + chatID + ".username", user.getFirstName());
         groupCache.set("chats." + chatID + ".lastname", user.getLastName());
-        groupCache.set("chats." + chatID + ".time", System.currentTimeMillis());
+        groupCache.set("chats." + chatID + ".time", tomorrow.toEpochSecond());
         try {
             groupCache.save();
             groupCache.load();

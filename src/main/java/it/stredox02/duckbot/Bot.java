@@ -19,7 +19,7 @@ public class Bot {
     @Getter private ScheduledExecutorService executorService;
     @Getter private YamlFile cacheFile;
 
-    public void start(){
+    public void start() {
         executorService = Executors.newSingleThreadScheduledExecutor();
 
         YamlFile configFile = new YamlFile("config.yml");
@@ -43,7 +43,7 @@ public class Bot {
                 cacheFile.createNewFile(true);
             }
             cacheFile.load();
-            if(cacheFile.getConfigurationSection("chats") == null){
+            if (cacheFile.getConfigurationSection("chats") == null) {
                 cacheFile.createSection("chats");
             }
             cacheFile.save();
@@ -58,7 +58,7 @@ public class Bot {
             e.printStackTrace();
         }
 
-        executorService.scheduleAtFixedRate(new ClearTask(this),0,1,TimeUnit.SECONDS);
+        executorService.scheduleAtFixedRate(new ClearTask(this), 0, 1, TimeUnit.SECONDS);
 
         try {
             TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
@@ -66,6 +66,7 @@ public class Bot {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+
         System.out.println("BOT STARTED");
     }
 

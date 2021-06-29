@@ -6,11 +6,14 @@ import org.simpleyaml.configuration.file.YamlFile;
 import org.simpleyaml.exceptions.InvalidConfigurationException;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -35,16 +38,24 @@ public class DuckKingBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        if (!update.hasMessage() || update.getMessage().getText() == null || update.hasCallbackQuery()) {
+        if (!update.hasMessage() || update.hasCallbackQuery()) {
             return;
         }
         Message message = update.getMessage();
+        Long chatID = message.getChatId();
+        if(message.getText().equalsIgnoreCase("/king")){
+            SendPhoto sendPhoto = new SendPhoto();
+            sendPhoto.setChatId(chatID.toString());
+            sendPhoto.setPhoto(new InputFile(new File("zera.jpg")));
+            sendPhoto.setCaption("\uD83C\uDF89 • <b>DUCK KING</b> • \uD83E\uDD86 \n\n\uD83D\uDC51 — <i>Zera</i> è un vero <b>duck lover</b> ❤️");
+            sendPhoto.setParseMode("HTML");
+            executeAsync(sendPhoto);
+            return;
+        }
         if (!message.getText().equalsIgnoreCase("papera")) {
             return;
         }
         User user = message.getFrom();
-        Long chatID = message.getChatId();
-
         ConfigurationSection section = groupCache.getConfigurationSection("chats");
         for(String key : section.getKeys(false)) {
             if(!key.equals(""+chatID)){

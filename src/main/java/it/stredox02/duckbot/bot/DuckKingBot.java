@@ -38,7 +38,7 @@ public class DuckKingBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        if (!update.hasMessage() || update.hasCallbackQuery()) {
+        if (!update.hasMessage() || !update.getMessage().hasText() || update.hasCallbackQuery()) {
             return;
         }
         Message message = update.getMessage();

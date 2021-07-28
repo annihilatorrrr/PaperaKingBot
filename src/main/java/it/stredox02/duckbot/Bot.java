@@ -66,6 +66,9 @@ public class Bot {
             e.printStackTrace();
         }
 
+        Thread printingHook = new Thread(() -> mongoConnection.getMongoClient().close());
+        Runtime.getRuntime().addShutdownHook(printingHook);
+
         System.out.println("BOT STARTED");
     }
 

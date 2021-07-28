@@ -17,12 +17,9 @@ import java.util.concurrent.TimeUnit;
 
 public class Bot {
 
-    @Getter
-    private ScheduledExecutorService executorService;
-    @Getter
+    @Getter private ScheduledExecutorService executorService;
     private MongoConnection mongoConnection;
-    @Getter
-    private DatabaseHandler databaseHandler;
+    @Getter private DatabaseHandler databaseHandler;
 
     public void start() {
         System.out.print("\033[H\033[2J");
@@ -55,7 +52,7 @@ public class Bot {
                 configFile.getString("mongodb.password"));
         mongoConnection.init();
 
-        databaseHandler = new Database(this);
+        databaseHandler = new Database(this, mongoConnection);
 
         executorService.scheduleAtFixedRate(new ClearTask(this), 0, 1, TimeUnit.SECONDS);
 

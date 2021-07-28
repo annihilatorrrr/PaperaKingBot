@@ -4,6 +4,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import it.stredox02.duckbot.Bot;
+import it.stredox02.duckbot.mongodb.MongoConnection;
 import it.stredox02.duckbot.object.UserData;
 import lombok.Getter;
 import org.bson.Document;
@@ -24,9 +25,9 @@ public class Database implements DatabaseHandler {
     @Getter
     private MongoCollection<Document> collection;
 
-    public Database(Bot bot) {
+    public Database(Bot bot, MongoConnection mongoConnection) {
         this.bot = bot;
-        this.database = bot.getMongoConnection().getMongoClient().getDatabase("duckking");
+        this.database = mongoConnection.getMongoClient().getDatabase("duckkingbot");
         this.collection = this.database.getCollection("users");
     }
 

@@ -43,6 +43,7 @@ public class Database implements DatabaseHandler {
 
         Document document = new Document("chatid", chatid);
         document.put("id", user.getId());
+        document.put("username", user.getUserName());
         document.put("firstname", user.getFirstName());
         document.put("lastname", user.getLastName());
         document.put("time", tomorrow.toEpochSecond());
@@ -53,6 +54,7 @@ public class Database implements DatabaseHandler {
     public List<UserData> getAllUsers() {
         return collection.find().into(new ArrayList<>()).stream().map(document -> new UserData(document.getString("chatid"),
                 document.getLong("id"),
+                document.getString("username"),
                 document.getString("firstname"),
                 document.getString("lastname"),
                 document.getLong("time"))).collect(Collectors.toList());

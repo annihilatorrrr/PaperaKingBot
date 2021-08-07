@@ -41,6 +41,22 @@ public class DuckKingBot extends TelegramLongPollingBot implements Perfection {
             }
             Message message = update.getMessage();
             Long chatID = message.getChatId();
+            User user = message.getFrom();
+            if(message.getText().equalsIgnoreCase("/start") && message.getChat().isUserChat()){
+                SendMessage sendMessage = new SendMessage();
+                sendMessage.setText("\uD83D\uDC4B  • Benvenuto " + "<a href=\"tg://user?id=" + update.getMessage().getFrom().getId() + "\">" +
+                        update.getMessage().getFrom().getFirstName() + "</a>" +
+                        "\n\n" +
+                        "➥ Come funziona? —\n" +
+                        "Aggiungimi ad un gruppo e ogni giorno chi scriverà per primo \"papera\" diventerà il re papera." +
+                        "\n\n" +
+                        "➥ Hai bisogno di Supporto? —\n" +
+                        "» Contatta @Stredox02");
+                sendMessage.enableHtml(true);
+                sendMessage.setChatId(chatID.toString());
+                executeAsync(sendMessage);
+                return;
+            }
             if (message.getText().equalsIgnoreCase("/king")) {
                 SendPhoto sendPhoto = new SendPhoto();
                 sendPhoto.setChatId(chatID.toString());
@@ -50,7 +66,6 @@ public class DuckKingBot extends TelegramLongPollingBot implements Perfection {
                 executeAsync(sendPhoto);
                 return;
             }
-            User user = message.getFrom();
             if(message.getText().startsWith("/adddking") && message.getText().split(" ").length == 2){
                 long target = Long.parseLong(message.getText().split(" ")[1]);
                 GetChatMember chatMember = new GetChatMember();

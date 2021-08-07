@@ -13,4 +13,6 @@ public interface DatabaseHandler {
 
     void removeKing(String chatid, long id);
 
+    void removeKing(String chatid);
+
 }

@@ -34,13 +34,17 @@ public class Database implements DatabaseHandler {
     @Override
     public void insertKing(String chatid, User user) {
         Document find = collection.find(Filters.eq("chatid", chatid)).first();
-        if (find != null) {
-            return;
-        }
         ZoneId zoneId = ZoneId.of("Europe/Rome");
         ZonedDateTime start = ZonedDateTime.ofInstant(Instant.now(), zoneId).toLocalDate().atStartOfDay(zoneId);
         ZonedDateTime tomorrow = start.plusDays(1);
-
+        if (find != null) {
+            collection.updateOne(Filters.eq("chatid", chatid), new Document("$set", new Document("id", user.getId())
+                    .append("username", user.getUserName())
+                    .append("firstname", user.getFirstName())
+                    .append("lastname", user.getLastName())
+                    .append("time", tomorrow.toEpochSecond())));
+            return;
+        }
         Document document = new Document("chatid", chatid);
         document.put("id", user.getId());
         document.put("username", user.getUserName());
@@ -63,6 +67,15 @@ public class Database implements DatabaseHandler {
     @Override
     public void removeKing(String chatid, long id) {
         Document document = collection.find(Filters.and(Filters.eq("chatid", chatid), Filters.eq("id", id))).first();
+        if (document == null) {
+            return;
+        }
+        collection.deleteOne(document);
+    }
+
+    @Override
+    public void removeKing(String chatid) {
+        Document document = collection.find(Filters.eq("chatid", chatid)).first();
         if (document == null) {
             return;
         }

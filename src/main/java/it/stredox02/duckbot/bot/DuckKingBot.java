@@ -2,21 +2,22 @@ package it.stredox02.duckbot.bot;
 
 import it.stredox02.duckbot.Bot;
 import it.stredox02.duckbot.object.UserData;
+import it.stredox02.duckbot.perfection.Perfection;
 import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
-import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.*;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @RequiredArgsConstructor
-public class DuckKingBot extends TelegramLongPollingBot {
+public class DuckKingBot extends TelegramLongPollingBot implements Perfection {
 
     private final Bot bot;
     private final String token;
@@ -49,10 +50,87 @@ public class DuckKingBot extends TelegramLongPollingBot {
                 executeAsync(sendPhoto);
                 return;
             }
+            User user = message.getFrom();
+            if(message.getText().startsWith("/adddking") && message.getText().split(" ").length == 2){
+                long target = Long.parseLong(message.getText().split(" ")[1]);
+                GetChatMember chatMember = new GetChatMember();
+                chatMember.setUserId(user.getId());
+                chatMember.setChatId(chatID.toString());
+                CompletableFuture<ChatMember> result = executeAsync(chatMember);
+                ChatMember member = result.get();
+
+                GetChatMember targetChatMember = new GetChatMember();
+                targetChatMember.setUserId(target);
+                targetChatMember.setChatId(chatID.toString());
+                CompletableFuture<ChatMember> result2 = executeAsync(targetChatMember);
+                ChatMember targetresult = result2.get();
+                if(targetresult == null){
+                    SendMessage sendMessage = new SendMessage();
+                    sendMessage.setText("<a href=\"https://i.imgur.com/AA1hyTV.jpg\">&#8205</a> \uD83D\uDE2D || <b>HEY</b> •" +
+                            " \uD83E\uDD86\n\n" +
+                            "\uD83D\uDC51 — <b>" +
+                            (user.getLastName() != null ? " " + user.getFirstName() + user.getLastName() : user.getFirstName()) +
+                            "</b> non è stato trovato questo utente, riprova");
+                    sendMessage.setChatId(chatID.toString());
+                    sendMessage.enableHtml(true);
+                    executeAsync(sendMessage);
+                    return;
+                }
+                if(member.getStatus().equalsIgnoreCase("creator") || member.getStatus().equalsIgnoreCase("administrator")){
+                    bot.getDatabaseHandler().insertKing(chatID.toString(), targetresult.getUser());
+                    SendMessage sendMessage = new SendMessage();
+                    sendMessage.setChatId(message.getChatId().toString());
+                    sendMessage.enableHtml(true);
+                    sendMessage.setText("<a href=\"https://i.imgur.com/Qt8aXbp.jpg\">&#8205</a> \uD83C\uDF89 || <b>HEY!</b> • \uD83E\uDD86 \n\n" +
+                            "\uD83D\uDC51 — <b>" + user.getFirstName() + (user.getLastName() != null ? " " + user.getLastName() : "") +
+                            "</b> hai aggiunto <b>" + targetresult.getUser().getFirstName() +
+                            (targetresult.getUser().getLastName() != null ? " " + targetresult.getUser().getLastName() : "") +
+                            "</b>come re papera di questo gruppo" + "!\n\n");
+                    executeAsync(sendMessage);
+                    return;
+                }
+                SendMessage sendMessage = new SendMessage();
+                sendMessage.setText("<a href=\"https://i.imgur.com/AA1hyTV.jpg\">&#8205</a> \uD83D\uDE2D || <b>HEY</b> •" +
+                        " \uD83E\uDD86\n\n" +
+                        "\uD83D\uDC51 — <b>" +
+                        (user.getLastName() != null ? " " + user.getFirstName() + user.getLastName() : user.getFirstName()) +
+                        "</b> non puoi usare questo comando");
+                sendMessage.setChatId(chatID.toString());
+                sendMessage.enableHtml(true);
+                executeAsync(sendMessage);
+                return;
+            }
+            if(message.getText().equalsIgnoreCase("/removedking")){
+                GetChatMember chatMember = new GetChatMember();
+                chatMember.setUserId(user.getId());
+                chatMember.setChatId(chatID.toString());
+                CompletableFuture<ChatMember> result = executeAsync(chatMember);
+                ChatMember member = result.get();
+                if(member.getStatus().equalsIgnoreCase("creator") || member.getStatus().equalsIgnoreCase("administrator")){
+                    bot.getDatabaseHandler().removeKing(chatID.toString());
+                    SendMessage sendMessage = new SendMessage();
+                    sendMessage.setChatId(message.getChatId().toString());
+                    sendMessage.enableHtml(true);
+                    sendMessage.setText("<a href=\"https://i.imgur.com/Qt8aXbp.jpg\">&#8205</a> \uD83C\uDF89 || <b>HEY!</b> • \uD83E\uDD86 \n\n" +
+                            "\uD83D\uDC51 — <b>" + user.getFirstName() + (user.getLastName() != null ? " " + user.getLastName() : "") +
+                            "</b> hai rimosso il re papera da questa chat!\n\n");
+                    executeAsync(sendMessage);
+                    return;
+                }
+                SendMessage sendMessage = new SendMessage();
+                sendMessage.setText("<a href=\"https://i.imgur.com/AA1hyTV.jpg\">&#8205</a> \uD83D\uDE2D || <b>HEY</b> •" +
+                        " \uD83E\uDD86\n\n" +
+                        "\uD83D\uDC51 — <b>" +
+                        (user.getLastName() != null ? " " + user.getFirstName() + user.getLastName() : user.getFirstName()) +
+                        "</b> non puoi usare questo comando");
+                sendMessage.setChatId(chatID.toString());
+                sendMessage.enableHtml(true);
+                executeAsync(sendMessage);
+                return;
+            }
             if (!message.getText().equalsIgnoreCase("papera")) {
                 return;
             }
-            User user = message.getFrom();
             List<UserData> datas = bot.getDatabaseHandler().getAllUsers();
             for (UserData data : datas) {
                 if (!data.getChatid().equals(chatID.toString())) {
@@ -65,7 +143,7 @@ public class DuckKingBot extends TelegramLongPollingBot {
                     alreadyTakenMessage.setText("<a href=\"https://i.imgur.com/oVj2mtR.jpeg\">&#8205</a> \uD83D\uDE2D || <b>HEY</b> • \uD83E\uDD86\n" +
                             "\n" +
                             "\uD83D\uDC51 — <b>" +
-                            (data.getLastname() != null ? " " + data.getFirstname() + data.getLastname() : data.getFirstname()) +
+                            (data.getLastName() != null ? " " + data.getFirstName() + data.getLastName() : data.getFirstName()) +
                             "</b> sei gia' il paperone di oggi :)");
                     executeAsync(alreadyTakenMessage);
                     return;
@@ -81,7 +159,7 @@ public class DuckKingBot extends TelegramLongPollingBot {
                     alreadyTakenMessage.setText("<a href=\"https://i.imgur.com/oVj2mtR.jpeg\">&#8205</a> \uD83D\uDE2D || <b>Mi dispiace tanto</b> • \uD83E\uDD86\n" +
                             "\n" +
                             "\uD83D\uDC51 — Purtroppo <b>" +
-                            (data.getLastname() != null ? " " + data.getFirstname() + data.getLastname() : data.getFirstname()) +
+                            (data.getLastName() != null ? " " + data.getFirstName() + data.getLastName() : data.getFirstName()) +
                             "</b> ha già preso il posto di Re Papera di oggi!");
                     executeAsync(alreadyTakenMessage);
                     result = true;
@@ -92,11 +170,12 @@ public class DuckKingBot extends TelegramLongPollingBot {
                 newDuckKing.setChatId(message.getChatId().toString());
                 newDuckKing.enableHtml(true);
                 newDuckKing.setText("<a href=\"https://i.imgur.com/2JTqaSI.jpeg\">&#8205</a> \uD83C\uDF89 || <b>Complimenti!</b> • \uD83E\uDD86 \n\n" +
-                        "\uD83D\uDC51 — <b>" + user.getFirstName() + (user.getLastName() != null ? " " + user.getLastName() : "") + "</b> sei il Re Papera di oggi!\n\n");
+                        "\uD83D\uDC51 — <b>" + user.getFirstName() + (user.getLastName() != null ? " " + user.getLastName() : "") +
+                        "</b> sei il Re Papera di oggi!\n\n");
                 executeAsync(newDuckKing);
                 bot.getDatabaseHandler().insertKing(chatID.toString(), user);
             }
-        } catch (TelegramApiException e) {
+        } catch (TelegramApiException | ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
     }

@@ -67,7 +67,21 @@ public class DuckKingBot extends TelegramLongPollingBot implements Perfection {
                 return;
             }
             if(message.getText().startsWith("/adddking") && message.getText().split(" ").length == 2){
-                long target = Long.parseLong(message.getText().split(" ")[1]);
+                long target;
+                try{
+                    target = Long.parseLong(message.getText().split(" ")[1]);
+                } catch (NumberFormatException e){
+                    SendMessage sendMessage = new SendMessage();
+                    sendMessage.setText("<a href=\"https://i.imgur.com/AA1hyTV.jpg\">&#8205</a> \uD83D\uDE2D || <b>HEY</b> •" +
+                            " \uD83E\uDD86\n\n" +
+                            "\uD83D\uDC51 — <b>" +
+                            (user.getLastName() != null ? " " + user.getFirstName() + user.getLastName() : user.getFirstName()) +
+                            "</b> devi inserire un id valido");
+                    sendMessage.setChatId(chatID.toString());
+                    sendMessage.enableHtml(true);
+                    executeAsync(sendMessage);
+                    return;
+                }
                 GetChatMember chatMember = new GetChatMember();
                 chatMember.setUserId(user.getId());
                 chatMember.setChatId(chatID.toString());
@@ -100,7 +114,7 @@ public class DuckKingBot extends TelegramLongPollingBot implements Perfection {
                             "\uD83D\uDC51 — <b>" + user.getFirstName() + (user.getLastName() != null ? " " + user.getLastName() : "") +
                             "</b> hai aggiunto <b>" + targetresult.getUser().getFirstName() +
                             (targetresult.getUser().getLastName() != null ? " " + targetresult.getUser().getLastName() : "") +
-                            "</b>come re papera di questo gruppo" + "!\n\n");
+                            " </b>come re papera di questo gruppo" + "!\n\n");
                     executeAsync(sendMessage);
                     return;
                 }

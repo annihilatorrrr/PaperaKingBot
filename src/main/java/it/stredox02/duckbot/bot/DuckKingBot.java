@@ -188,7 +188,7 @@ public class DuckKingBot extends TelegramLongPollingBot implements Perfection {
                     alreadyTakenMessage.setText("<a href=\"https://i.imgur.com/oVj2mtR.jpeg\">&#8205</a> \uD83D\uDE2D || <b>Mi dispiace tanto</b> • \uD83E\uDD86\n" +
                             "\n" +
                             "\uD83D\uDC51 — Purtroppo <b>" +
-                            (data.getLastName() != null ? " " + data.getFirstName() + data.getLastName() : data.getFirstName()) +
+                            (data.getLastName() != null ? data.getFirstName() + " " + data.getLastName() : data.getFirstName()) +
                             "</b> ha già preso il posto di Re Papera di oggi!");
                     executeAsync(alreadyTakenMessage);
                     result = true;
@@ -199,7 +199,8 @@ public class DuckKingBot extends TelegramLongPollingBot implements Perfection {
                 newDuckKing.setChatId(message.getChatId().toString());
                 newDuckKing.enableHtml(true);
                 newDuckKing.setText("<a href=\"https://i.imgur.com/2JTqaSI.jpeg\">&#8205</a> \uD83C\uDF89 || <b>Complimenti!</b> • \uD83E\uDD86 \n\n" +
-                        "\uD83D\uDC51 — <b>" + user.getFirstName() + (user.getLastName() != null ? " " + user.getLastName() : "") +
+                        "\uD83D\uDC51 — <b>" +
+                        (user.getLastName() != null ? user.getFirstName() + " " + user.getLastName() : user.getFirstName()) +
                         "</b> sei il Re Papera di oggi!\n\n");
                 executeAsync(newDuckKing);
                 bot.getDatabaseHandler().insertKing(chatID.toString(), user);

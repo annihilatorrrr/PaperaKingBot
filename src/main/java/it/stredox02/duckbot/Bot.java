@@ -63,8 +63,11 @@ public class Bot {
             e.printStackTrace();
         }
 
-        Thread printingHook = new Thread(() -> mongoConnection.getMongoClient().close());
-        Runtime.getRuntime().addShutdownHook(printingHook);
+        Thread shutdownHook = new Thread(() -> {
+            mongoConnection.getMongoClient().close();
+            executorService.shutdown();
+        });
+        Runtime.getRuntime().addShutdownHook(shutdownHook);
 
         System.out.println("BOT STARTED");
     }

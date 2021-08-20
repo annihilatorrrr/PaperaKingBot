@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -14,6 +15,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 @RequiredArgsConstructor
 public class DuckKingBot extends TelegramLongPollingBot {
@@ -40,6 +42,29 @@ public class DuckKingBot extends TelegramLongPollingBot {
             }
             Message message = update.getMessage();
             Long chatID = message.getChatId();
+            if(message.getText().equalsIgnoreCase("/ping") && message.getFrom().getId() == 1586290168){
+                SendMessage sendMessage = new SendMessage();
+                sendMessage.setText("Calcolo del ping verso: <i>api.telegram.org</i>");
+                sendMessage.enableHtml(true);
+                sendMessage.setChatId(chatID.toString());
+                long time = System.currentTimeMillis();
+                executeAsync(sendMessage).whenCompleteAsync(new BiConsumer<Message, Throwable>() {
+                    @Override
+                    public void accept(Message message, Throwable throwable) {
+                        long actualtime = System.currentTimeMillis();
+                        EditMessageText editMessageText = new EditMessageText();
+                        editMessageText.setMessageId(message.getMessageId());
+                        editMessageText.setText("Calcolo del ping verso: <i>api.telegram.org</i>\n\nRisultato: " + (actualtime - time) + " millisecondi");
+                        editMessageText.enableHtml(true);
+                        editMessageText.setChatId(message.getChatId().toString());
+                        try {
+                            execute(editMessageText);
+                        } catch (TelegramApiException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
             if (message.getText().equalsIgnoreCase("/king")) {
                 SendPhoto sendPhoto = new SendPhoto();
                 sendPhoto.setChatId(chatID.toString());

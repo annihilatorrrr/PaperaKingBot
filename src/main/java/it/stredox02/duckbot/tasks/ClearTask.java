@@ -11,9 +11,10 @@ public class ClearTask implements Runnable {
 
     @Override
     public void run() {
-        for (UserData data : bot.getDatabaseHandler().getAllUsers()) {
-            if (data.getId() != 0 && data.getTime() < (System.currentTimeMillis() / 1000)) {
-                bot.getDatabaseHandler().removeKing(data.getChatid(), data.getId());
+        for (UserData userData : bot.getDatabaseHandler().getAllUsers()) {
+            if (userData.getId() != 0 && userData.getTime() < (System.currentTimeMillis() / 1000)) {
+                bot.getDatabaseHandler().removeKing(userData.getChatid(), userData.getId());
+                bot.getDatabaseHandler().clearResetPerDay(userData.getChatid());
             }
         }
     }

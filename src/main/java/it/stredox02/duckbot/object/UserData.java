@@ -11,8 +11,9 @@ public class UserData {
 
     private String chatid;
     private long id;
-    private String firstname;
-    private String lastname;
+    private String userName;
+    private String firstName;
+    private String lastName;
     private long time;
 
 }

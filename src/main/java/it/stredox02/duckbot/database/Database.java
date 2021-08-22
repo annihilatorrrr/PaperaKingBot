@@ -22,12 +22,9 @@ import java.util.stream.Collectors;
 public class Database implements DatabaseHandler {
 
     private Bot bot;
-    @Getter
-    private MongoDatabase database;
-    @Getter
-    private MongoCollection<Document> usersCollection;
-    @Getter
-    private MongoCollection<Document> groupsCollection;
+    @Getter private MongoDatabase database;
+    @Getter private MongoCollection<Document> usersCollection;
+    @Getter private MongoCollection<Document> groupsCollection;
 
     public Database(Bot bot, MongoConnection mongoConnection) {
         this.bot = bot;
@@ -47,7 +44,7 @@ public class Database implements DatabaseHandler {
                     .append("username", user.getUserName())
                     .append("firstname", user.getFirstName())
                     .append("lastname", user.getLastName())
-                    .append("time", tomorrow.toEpochSecond())));
+                    .append("time", tomorrow.toEpochSecond() + 5)));
             return;
         }
         Document document = new Document("chatid", chatid);
@@ -55,7 +52,7 @@ public class Database implements DatabaseHandler {
         document.put("username", user.getUserName());
         document.put("firstname", user.getFirstName());
         document.put("lastname", user.getLastName());
-        document.put("time", tomorrow.toEpochSecond());
+        document.put("time", tomorrow.toEpochSecond() + 5);
         usersCollection.insertOne(document);
     }
 

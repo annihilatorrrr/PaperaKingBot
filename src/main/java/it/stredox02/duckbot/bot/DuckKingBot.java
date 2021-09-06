@@ -14,11 +14,6 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.*;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
-import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
@@ -537,28 +532,28 @@ public class DuckKingBot extends TelegramLongPollingBot implements Perfection {
             }
             User user = message.getFrom();
 
-            if(message.getFrom().getUserName() != null && message.getFrom().getUserName().equalsIgnoreCase("Stredox02")) {
-                if (message.getText().equalsIgnoreCase("/ducksettings")) {
-                    SendMessage sendMessage = new SendMessage();
-                    sendMessage.setText("<b>Impostazioni del gruppo</b>\n<i>" + message.getChat().getTitle() + "</i>");
-                    sendMessage.enableHtml(true);
-                    sendMessage.setChatId(message.getChatId().toString());
 
-                    InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
-                    List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
-                    List<InlineKeyboardButton> firstRow = new ArrayList<>();
+            if (message.getText().equalsIgnoreCase("/ducksettings") || message.getText().equalsIgnoreCase("/ducksettings@" + getBotUsername())) {
+                SendMessage sendMessage = new SendMessage();
+                sendMessage.setText("<b>Impostazioni del gruppo</b>\n<i>" + message.getChat().getTitle() + "</i>");
+                sendMessage.enableHtml(true);
+                sendMessage.setChatId(message.getChatId().toString());
 
-                    InlineKeyboardButton adminOption = new InlineKeyboardButton();
-                    adminOption.setText("Impostazioni admin");
-                    adminOption.setCallbackData("admin_settings");
-                    firstRow.add(adminOption);
+                InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
+                List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
+                List<InlineKeyboardButton> firstRow = new ArrayList<>();
 
-                    rowsInline.add(firstRow);
+                InlineKeyboardButton adminOption = new InlineKeyboardButton();
+                adminOption.setText("Impostazioni admin");
+                adminOption.setCallbackData("admin_settings");
+                firstRow.add(adminOption);
 
-                    markupInline.setKeyboard(rowsInline);
-                    sendMessage.setReplyMarkup(markupInline);
-                    executeAsync(sendMessage);
-                }
+                rowsInline.add(firstRow);
+
+                markupInline.setKeyboard(rowsInline);
+                sendMessage.setReplyMarkup(markupInline);
+                executeAsync(sendMessage);
+                return;
             }
 
 
@@ -577,7 +572,7 @@ public class DuckKingBot extends TelegramLongPollingBot implements Perfection {
                 executeAsync(sendMessage);
                 return;
             }
-            if (message.getText().equalsIgnoreCase("/king")) {
+            if (message.getText().equalsIgnoreCase("/king") || message.getText().equalsIgnoreCase("/king@" + getBotUsername())) {
                 SendPhoto sendPhoto = new SendPhoto();
                 sendPhoto.setChatId(chatID.toString());
                 sendPhoto.setPhoto(new InputFile(new File("zera.jpg")));
@@ -587,7 +582,8 @@ public class DuckKingBot extends TelegramLongPollingBot implements Perfection {
                 return;
             }
 
-            if(message.getText().startsWith("/adddking") && message.getText().split(" ").length == 2){
+            if((message.getText().startsWith("/adddking") || message.getText().startsWith("/adddking@" + getBotUsername())) &&
+                    message.getText().split(" ").length == 2){
                 long target;
                 try{
                     target = Long.parseLong(message.getText().split(" ")[1]);
@@ -653,7 +649,7 @@ public class DuckKingBot extends TelegramLongPollingBot implements Perfection {
             }
 
 
-            if(message.getText().equalsIgnoreCase("/removedking")){
+            if(message.getText().equalsIgnoreCase("/removedking") || message.getText().equalsIgnoreCase("/removedking@" + getBotUsername())){
                 GetChatMember chatMember = new GetChatMember();
                 chatMember.setUserId(user.getId());
                 chatMember.setChatId(chatID.toString());
